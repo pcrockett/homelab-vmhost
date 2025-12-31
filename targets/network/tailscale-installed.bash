@@ -2,8 +2,7 @@
 
 depends_on core/rush-installed
 
-PACKAGE_NAME="TODO"
-panic "don't forget to double-check satisfied_if"
+PACKAGE_NAME="tailscale"
 
 satisfied_if() {
   command -v "${PACKAGE_NAME}"

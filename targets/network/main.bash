@@ -1,8 +1,7 @@
 #!/usr/bin/env blarg
 
 targets=(
-  core/main
-  network/main
+  tailscale-installed
 )
 
 depends_on "${targets[@]}"
