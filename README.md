@@ -9,6 +9,10 @@ Work in progress. I copy / pasted a lot of this from my
 [tinkering laptop config](https://github.com/pcrockett/lappy), and I'm still getting it
 up and running.
 
+1. Clone the repository to your new Debian machine
+2. `cd` to your repository and run `./bin/blarg --verbose targets/main.bash`
+3. After that, you can just run `make` as often as you need to
+
 ## How this works
 
 I'm using my own target-based Bash configuration management tool
