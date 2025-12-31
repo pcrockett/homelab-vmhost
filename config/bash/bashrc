@@ -1,0 +1,8 @@
+# shellcheck shell=bash
+export RUSH_CONFIG="${HOME}/.config/rush/config"
+export RUSH_ROOT="${HOME}/.local/share/rush"
+export HOMELAB_VHMOST_BASH_CONFIGURED=1
+
+ll() {
+  ls -lh "$@"
+}
