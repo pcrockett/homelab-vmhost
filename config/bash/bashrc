@@ -6,3 +6,12 @@ export HOMELAB_VHMOST_BASH_CONFIGURED=1
 ll() {
   ls -lh "$@"
 }
+
+config_update() {
+  (
+    set -euo pipefail
+    cd /opt/config/homelab-vmhost
+    git pull
+    make
+  )
+}
