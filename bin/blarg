@@ -1,0 +1,330 @@
+#!/usr/bin/env python3
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import sys
+
+from dataclasses import dataclass
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import List, Optional
+
+
+VERSION = "0.5.1"
+
+
+STDLIB = """
+#!/usr/bin/env bash
+
+BLARG_TARGET_DEPENDENCIES=()
+
+panic() {
+    echo "FATAL: ${*}" >&2
+    exit 1
+}
+
+log_verbose() {
+    if [ "${BLARG_VERBOSE+x}" == "x" ]; then
+        echo "${*}"
+    fi
+}
+
+is_dry_run() {
+    test "${BLARG_DRY_RUN+x}" == "x"
+}
+
+depends_on() {
+    # this command may not be used in the user's target script, so we could get
+    # a shellcheck "command unreachable" error here _sometimes_.
+    #
+    # shellcheck disable=SC2317
+    BLARG_TARGET_DEPENDENCIES+=("$@")
+}
+
+find_target() {
+    local script_basename="${1}"
+    local this_dir full_target_path search_dirs script_basename dir
+    this_dir="$(dirname "${BLARG_TARGET_PATH}")" || panic "unable to get directory name"
+    search_dirs=(
+        "${this_dir}"
+        "${BLARG_TARGETS_DIR}"
+    )
+
+    for dir in "${search_dirs[@]}"; do
+        full_target_path="${dir}/${script_basename}.bash"
+        if [ -f "${full_target_path}" ]; then
+            echo "${full_target_path}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+satisfy() {
+    local full_target_path script_basename target_result final_result
+
+    final_result=0
+    for script_basename in "$@"; do
+        full_target_path="$(find_target "${script_basename}")" \\
+            || panic "Target does not exist: ${script_basename}"
+        "${full_target_path}"
+        target_result=$?
+        if [ ${target_result} -ne 0 ]; then
+            if is_dry_run; then
+                # `target_result` tells us that the target needs to run `apply`
+                # we're going to keep iterating through dependencies, but ultimately
+                # return 1.
+                final_result=1
+            else
+                # `target_result` tells us that the target `apply` failed
+                # it's time to bail.
+                return ${target_result}
+            fi
+        fi
+    done
+    return ${final_result}
+}
+"""
+
+
+BASE = """
+satisfied_if() {
+    # this command will normally be unreachable; the user's `satisfied_if`
+    # implementation will very often override this one.
+    #
+    # shellcheck disable=SC2317
+    false
+}
+
+"""
+
+
+EXECUTOR = """
+__BLARG_MAIN__() {
+    local final_result=0
+    if [ ${#BLARG_TARGET_DEPENDENCIES[@]} -gt 0 ]; then
+        log_verbose "${BLARG_INDENT}${BLARG_TARGET_NAME} [dependencies...]"
+        satisfy "${BLARG_TARGET_DEPENDENCIES[@]}"
+        satisfy_result=$?
+        if [ ${satisfy_result} -ne 0 ]; then
+            if is_dry_run; then
+                # `satisfy_result` tells us that a dependency needs an `apply`
+                # we'll keep iterating through dependencies, but we know right now
+                # that we'll be returning an exit code of 1.
+                final_result=1
+            else
+                # `satisfy_result` tells us that a dependency's `apply` failed.
+                # time to bail.
+                return ${satisfy_result}
+            fi
+        fi
+    fi
+
+    log_verbose "${BLARG_INDENT}${BLARG_TARGET_NAME} [running...]"
+    (
+        set -Eeuo pipefail
+        satisfied_if &> /dev/null
+    )
+    satisfied_if_result=$?
+
+    if [ ${satisfied_if_result} -eq 0 ]; then
+        log_verbose "${BLARG_INDENT}${BLARG_TARGET_NAME} [already satisfied]"
+        return ${final_result}
+    fi
+
+    if is_dry_run; then
+        if [ "$(type -t apply)" == "function" ]; then
+            echo "dry-run: would apply ${BLARG_TARGET_NAME}"
+            return 1
+        else
+            return ${final_result}
+        fi
+    elif [ "$(type -t apply)" == "function" ]; then
+        (
+            set -Eeuo pipefail
+            apply
+        )
+        apply_result=$?
+        test ${apply_result} -eq 0 || panic "${BLARG_TARGET_NAME}.apply() returned with code ${apply_result}."
+    fi
+
+    log_verbose "${BLARG_INDENT}${BLARG_TARGET_NAME} [done]"
+    return ${final_result}
+}
+
+__BLARG_MAIN__
+"""
+
+
+@dataclass
+class CliArgs:
+    script_path: Optional[Path]
+    dump_src: bool
+    version: bool
+    verbose: bool
+    dry_run: bool
+
+
+class CliParser(argparse.ArgumentParser):
+    def __init__(self):
+        super().__init__("blarg", description="Execute bash target files <https://github.com/pcrockett/blarg>")
+        self.add_argument(
+            "script_path", help="script file to execute", default=None, nargs="?"
+        )
+        self.add_argument(
+            "--dump-src",
+            "-d",
+            help=(
+                "output the full source that would be executed "
+                "by Bash instead of running"
+            ),
+            action="store_true",
+        )
+        self.add_argument(
+            "--version", help="display version number", action="store_true"
+        )
+        self.add_argument(
+            "--verbose", "-v", help="display verbose output", action="store_true"
+        )
+        self.add_argument(
+            "--dry-run", "-r", help="don't apply targets", action="store_true"
+        )
+
+
+def parse_args() -> CliArgs:
+    args = CliParser().parse_args()
+    return CliArgs(
+        Path(args.script_path) if args.script_path else None,
+        args.dump_src,
+        args.version,
+        args.verbose,
+        args.dry_run,
+    )
+
+
+def list_dir_if_exists(dir_path: Path) -> List[Path]:
+    try:
+        return sorted([p.resolve() for p in dir_path.iterdir() if not p.is_dir()])
+    except (FileNotFoundError, NotADirectoryError):
+        return []
+
+
+def generate_script(script_path: Path) -> str:
+    script = f"# {script_path}\n" + script_path.read_text("utf8")
+    script_parts = [STDLIB]
+
+    lib_d_dir = Path("lib.d")  # lib.d dir in current working directory
+    for file in list_dir_if_exists(lib_d_dir):
+        if not str(file).endswith(".sh") and not str(file).endswith(".bash"):
+            continue
+        script_parts.append(f"# {file}\n{file.read_text('utf8')}\n")
+
+    return "".join(script_parts + [BASE, script, EXECUTOR]).lstrip()
+
+
+def main() -> int:
+    args = parse_args()
+
+    if args.version:
+        print(f"blarg version {VERSION}")
+        return 0
+
+    if not args.script_path:
+        CliParser().print_help()
+        return 0
+
+    script_path = args.script_path
+    if script_path.is_dir():
+        script_path = script_path / "main.bash"
+
+    if args.dump_src:
+        print(generate_script(script_path))
+        return 0
+
+    env = os.environ
+    resolved_path = script_path.resolve()
+    env["BLARG_TARGET_PATH"] = str(resolved_path)
+
+    is_verbose = args.verbose or "BLARG_VERBOSE" in env
+    if is_verbose:
+        env["BLARG_VERBOSE"] = str(is_verbose)
+
+    if not env.get("BLARG_CWD"):
+        env["BLARG_CWD"] = os.getcwd()
+
+    targets_dir = env.get("BLARG_TARGETS_DIR")
+    if targets_dir:
+        targets_dir = Path(targets_dir).resolve()
+    else:
+        targets_dir = str(Path.cwd() / "targets")
+        env["BLARG_TARGETS_DIR"] = targets_dir
+
+    dry_run = args.dry_run or "BLARG_DRY_RUN" in env
+    if dry_run:
+        env["BLARG_DRY_RUN"] = str(dry_run)
+
+    indent = env.get("BLARG_INDENT")
+    if indent is None:
+        indent = "--> "
+    else:
+        indent = f" {indent}"
+    env["BLARG_INDENT"] = indent
+
+    target_name = str(resolved_path.with_suffix(""))
+    _, _, shortened_target_name = target_name.partition(f"{targets_dir}/")
+    env["BLARG_TARGET_NAME"] = shortened_target_name or target_name
+
+    running_targets_unparsed = env.get("BLARG_RUNNING_TARGETS")
+    if running_targets_unparsed:
+        running_targets = json.loads(running_targets_unparsed)
+    else:
+        running_targets = []
+
+    if str(resolved_path) in running_targets:
+        stack_seperator = "\n-> "
+        print(
+            f"FATAL: Circular dependency detected at `{resolved_path}`:\n"
+            f"{stack_seperator.join(running_targets)}"
+            f"{stack_seperator}{resolved_path}",
+            file=sys.stderr,
+        )
+        return 1
+
+    running_targets.append(str(resolved_path))
+    env["BLARG_RUNNING_TARGETS"] = json.dumps(running_targets)
+
+    temp_dir_path = env.get("BLARG_RUN_DIR")
+    if temp_dir_path:
+        temp_dir = None  # a different blarg process is managing this directory
+    else:
+        temp_dir = TemporaryDirectory()
+        temp_dir_path = temp_dir.name
+        env["BLARG_RUN_DIR"] = temp_dir_path
+        os.mkdir(f"{temp_dir_path}/.target-markers")
+
+    script_path_digest = hashlib.sha1(str(resolved_path).encode("utf8")).hexdigest()
+    marker_file = Path(temp_dir_path) / ".target-markers" / script_path_digest
+    if marker_file.exists():
+        return 0  # this target has already been run
+    else:
+        marker_file.touch()
+
+    try:
+        result = subprocess.run(
+            ["bash", "-Euo", "pipefail"],
+            input=generate_script(script_path),
+            encoding="utf8",
+            env=env,
+        )
+    finally:
+        if temp_dir is not None:
+            temp_dir.cleanup()
+
+    return result.returncode
+
+
+if __name__ == "__main__":
+    exit_code = main()
+    quit(exit_code)
