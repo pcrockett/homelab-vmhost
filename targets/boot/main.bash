@@ -1,7 +1,7 @@
 #!/usr/bin/env blarg
 
 targets=(
-  tpm-decryption-configured
+  tpm-unlock-configured
 )
 
 depends_on "${targets[@]}"
