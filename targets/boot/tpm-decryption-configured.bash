@@ -14,9 +14,24 @@ apply() {
   #
   #     lsblk --filter 'TYPE == "crypt"' --output PKNAME --noheadings \
   #       | sort --unique \
-  #       | xargs printf '/dev/%s\n' \
-  #       | as_root PASSWORD="${DISK_ENCRYPTION_PW}" xargs systemd-cryptenroll --tpm2-device=auto
+  #       | xargs -L1 printf '/dev/%s\n' \
+  #       | as_root PASSWORD="${DISK_ENCRYPTION_PW}" xargs -L1 systemd-cryptenroll --tpm2-device=auto
   #
   # Anyway, let's fall back to clevis.
-  panic "Work in progress"
+
+  temp_dir="$(mktemp -d)"
+  cleanup() {
+    rm -rf "${temp_dir}"
+  }
+  trap 'cleanup' EXIT
+
+  password_file="${temp_dir}/luks-pw"
+  echo -n "${DISK_ENCRYPTION_PW}" >"${password_file}"
+
+  lsblk --filter 'TYPE == "crypt"' --output PKNAME --noheadings \
+    | sort --unique \
+    | xargs -L1 printf '/dev/%s\n' \
+    | as_root xargs -L1 clevis luks bind -k "${password_file}" tpm2 '{}' -d
+
+  as_root update-initramfs -u -k all
 }
