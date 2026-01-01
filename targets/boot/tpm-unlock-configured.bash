@@ -16,7 +16,7 @@ apply() {
   lsblk --filter 'TYPE == "crypt"' --output PKNAME --noheadings \
     | sort --unique \
     | while IFS= read -r device_name; do
-      as_root clevis luks bind -k <(echo "${DISK_ENCRYPTION_PASSWORD}") -d "/dev/${device_name}" tpm2 '{}'
+      echo "${DISK_ENCRYPTION_PASSWORD}" | as_root clevis luks bind -k - -d "/dev/${device_name}" tpm2 '{}'
     done
 
   as_root update-initramfs -u -k all
