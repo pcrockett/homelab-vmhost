@@ -1,0 +1,18 @@
+[Unit]
+Description=Turn off screen after inactivity
+After=getty@tty1.service
+BindsTo=getty@tty1.service
+After=systemd-user-sessions.service
+
+[Service]
+ExecStart=/usr/bin/setterm --blank 1 --powerdown 1 --term linux
+Type=oneshot
+RemainAfterExit=yes
+StandardInput=tty-force
+StandardOutput=inherit
+StandardError=inherit
+TTYPath=/dev/tty1
+User=root
+
+[Install]
+WantedBy=multi-user.target

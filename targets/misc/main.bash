@@ -1,10 +1,7 @@
 #!/usr/bin/env blarg
 
 targets=(
-  core/main
-  network/main
-  boot/main
-  misc/main
+  screensaver-enabled
 )
 
 depends_on "${targets[@]}"
