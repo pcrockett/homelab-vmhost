@@ -1,9 +1,7 @@
 #!/usr/bin/env blarg
 
 targets=(
-  core/main
-  network/main
-  boot/main
+  tpm-decryption-configured
 )
 
 depends_on "${targets[@]}"
