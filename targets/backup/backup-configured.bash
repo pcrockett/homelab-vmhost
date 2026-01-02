@@ -20,7 +20,7 @@ apply() {
 
   RESTIC_E2EE_PASSWORD="$(bw_value backup.e2ee-password)" \
   AWS_ACCESS_KEY_ID="$(bw_value backup.aws-access-key.id)" \
-  SECRET_ACCESS_KEY="$(bw_value backup.aws-access-key.secret)" \
+  AWS_SECRET_ACCESS_KEY="$(bw_value backup.aws-access-key.secret)" \
   S3_REPOSITORY_URL="$(bw_value backup.s3-repository-url)" \
   EXTERNAL_FILESYSTEM_UUID="$(bw_value backup.external-fs-uuid)" \
     template_render "${REPO_CONFIG_DIR}/${FILE_NAME}.template"
