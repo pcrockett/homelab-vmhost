@@ -24,6 +24,8 @@ apply() {
   S3_REPOSITORY_URL="$(bw_value backup.s3-repository-url)" \
   EXTERNAL_FILESYSTEM_UUID="$(bw_value backup.external-fs-uuid)" \
     template_render "${REPO_CONFIG_DIR}/${FILE_NAME}.template"
+
+  as_root with-umask u=rwx,g=,o= mkdir --parent "${SYSTEM_CONFIG_DIR}"
   as_root with-umask u=rw,g=,o= cp "${REPO_CONFIG_DIR}/${FILE_NAME}" "${SYSTEM_CONFIG_DIR}"
 
   # remove the generated file, just to reduce the amount of secrets lying around
