@@ -1,6 +1,6 @@
 #!/usr/bin/env blarg
 
-depends_on core/jq-installed core/with-umask-installed bitwarden/cli-installed
+depends_on core/with-umask-installed bitwarden/cli-installed
 
 FILE_NAME="TODO"
 REPO_CONFIG_DIR="${BLARG_CWD}/config/TODO"
@@ -13,7 +13,7 @@ satisfied_if() {
 
 apply() {
   satisfy bitwarden/synced
-  load_bw_item beekrpad.TODO
+  load_bw_item lab01.backup
 
   SECRET_VALUE="$(bw_value secret-attribute)" \
     template_render "${REPO_CONFIG_DIR}/${FILE_NAME}.template"

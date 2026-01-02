@@ -4,6 +4,7 @@ targets=(
   core/main
   network/main
   boot/main
+  backup/main
   misc/main
 )
 

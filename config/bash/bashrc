@@ -15,3 +15,15 @@ config_update() {
     make
   )
 }
+
+# bitwarden unlock
+bwu() {
+  BW_SESSION="$(bw unlock --raw)"
+  export BW_SESSION
+}
+
+# bitwarden lock
+bwl() {
+  bw lock
+  BW_SESSION=
+}
