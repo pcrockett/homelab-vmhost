@@ -1,6 +1,6 @@
 #!/usr/bin/env blarg
 
-depends_on curl-installed git-installed bash-configured
+depends_on curl-installed git-installed rush-configured
 
 satisfied_if() {
   command -v rush
