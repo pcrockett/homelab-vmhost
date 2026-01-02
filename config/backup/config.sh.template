@@ -18,6 +18,7 @@ EXTERNAL_BACKUP_DIR="lab01-backup"
 BACKUP_PATHS=(
   "/home/phil"
   "/etc/backup"
+  "/opt"
 )
 
 # shellcheck disable=SC2016  # dollar signs don't expand in single quotes (see $RECYCLE.BIN)
