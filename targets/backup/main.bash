@@ -1,8 +1,7 @@
 #!/usr/bin/env blarg
 
 targets=(
-  backup-cli-installed
-  backup-configured
+  automagic
 )
 
 depends_on "${targets[@]}"
