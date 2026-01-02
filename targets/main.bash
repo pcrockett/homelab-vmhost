@@ -6,6 +6,7 @@ targets=(
   boot/main
   backup/main
   misc/main
+  cli/main
 )
 
 depends_on "${targets[@]}"
