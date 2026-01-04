@@ -1,3 +1,5 @@
 # shellcheck shell=bash
 strict_env
 PATH_add bin
+
+export SSH_DEST=user@tailscale-hostname
