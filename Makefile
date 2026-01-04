@@ -18,3 +18,7 @@ remote:
 tf-init:
 	terraform -chdir=tf init
 .PHONY: tf-init
+
+tf-validate:
+	terraform -chdir=tf validate
+.PHONY: tf-validate
