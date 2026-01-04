@@ -1,3 +1,10 @@
+resource "libvirt_volume" "gis_workstation" {
+  name     = "gis_workstation.qcow2"
+  pool     = "default"
+  capacity = 42949672960 # 40 GiB
+  type     = "qcow2"
+}
+
 resource "libvirt_domain" "gis_workstation" {
   name = "gis"
   memory = 4096
@@ -19,7 +26,7 @@ resource "libvirt_domain" "gis_workstation" {
       {
         source = {
           file = {
-            file = "/var/lib/libvirt/images/gis_workstation.qcow2"
+            file = resource.libvirt_volume.gis_workstation.path
           }
         }
         target = {
