@@ -10,7 +10,9 @@ resource "libvirt_volume" "gis_workstation" {
   name     = "gis_workstation.qcow2"
   pool     = resource.libvirt_pool.default.name
   capacity = 42949672960 # 40 GiB
-  type     = "qcow2"
+  target   = {
+    type = "qcow2"
+  }
 }
 
 resource "libvirt_domain" "gis_workstation" {
