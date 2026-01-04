@@ -1,6 +1,11 @@
+resource "libvirt_pool" "default" {
+  name = "default"
+  type = "dir"
+}
+
 resource "libvirt_volume" "gis_workstation" {
   name     = "gis_workstation.qcow2"
-  pool     = "default"
+  pool     = resource.libvirt_pool.default.name
   capacity = 42949672960 # 40 GiB
   type     = "qcow2"
 }
