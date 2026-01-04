@@ -1,7 +1,7 @@
 #!/usr/bin/env blarg
 
 targets=(
-  packages-installed
+  libvirtd-enabled
 )
 
 depends_on "${targets[@]}"
