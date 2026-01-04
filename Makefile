@@ -14,3 +14,7 @@ remote:
 	@# -c (command): command to execute
 	tailscale ssh "$(SSH_DEST)" -t -- bash -l -i -c config_update
 .PHONY: remote
+
+tf-init:
+	terraform -chdir=tf init
+.PHONY: tf-init
