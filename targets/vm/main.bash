@@ -2,6 +2,7 @@
 
 targets=(
   libvirtd-enabled
+  libvirt-group-configured
 )
 
 depends_on "${targets[@]}"
