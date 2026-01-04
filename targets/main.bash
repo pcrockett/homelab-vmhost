@@ -7,6 +7,7 @@ targets=(
   backup/main
   misc/main
   cli/main
+  vm/main
 )
 
 depends_on "${targets[@]}"
