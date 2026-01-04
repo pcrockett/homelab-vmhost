@@ -58,5 +58,16 @@ resource "libvirt_domain" "gis_workstation" {
         }
       }
     ]
+
+    graphics = [
+      {
+        spice = {
+          port = 5900
+          listeners = [
+            { address = { address = "127.0.0.1" } }
+          ]
+        }
+      }
+    ]
   }
 }

@@ -7,6 +7,8 @@ PACKAGES=(
   bridge-utils
   dnsmasq-base
   qemu-utils  # for qemu-img tool, which allows creating qcow2 volumes
+  libspice-server1
+  qemu-system-modules-spice
 )
 
 snippet "packages-installed"
