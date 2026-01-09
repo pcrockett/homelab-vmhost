@@ -1,0 +1,6 @@
+# https://www.debian.org/doc/manuals/debian-handbook/sect.network-config.en.html
+
+auto wlp2s0
+iface wlp2s0 inet dhcp
+  wpa-ssid ${WLAN_SSID}
+  wpa-psk ${WLAN_PASSWORD}
