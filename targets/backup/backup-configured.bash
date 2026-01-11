@@ -2,16 +2,12 @@
 
 depends_on core/with-umask-installed bitwarden/cli-installed
 
-MARKER_FILE="${STATE_DIR}/${BLARG_TARGET_NAME}"
 FILE_NAME="config.sh"
 REPO_CONFIG_DIR="${BLARG_CWD}/config/backup"
 SYSTEM_CONFIG_DIR="/etc/backup"
 
 satisfied_if() {
-  test -f "${MARKER_FILE}"
-  marker_timestamp="$(file_timestamp "${MARKER_FILE}")"
-  [ "${marker_timestamp}" -gt "$(file_timestamp "${BLARG_TARGET_PATH}")" ] \
-    && [ "${marker_timestamp}" -gt "$(file_timestamp "${REPO_CONFIG_DIR}/${FILE_NAME}.template")" ]
+  checkpoint_is_current "${REPO_CONFIG_DIR}/${FILE_NAME}.template"
 }
 
 apply() {
@@ -31,6 +27,5 @@ apply() {
   # remove the generated file, just to reduce the amount of secrets lying around
   rm "${REPO_CONFIG_DIR}/${FILE_NAME}"
 
-  mkdir --parent "$(dirname "${MARKER_FILE}")"
-  touch "${MARKER_FILE}"
+  checkpoint_success
 }
