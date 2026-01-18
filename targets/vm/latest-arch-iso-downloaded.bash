@@ -1,8 +1,8 @@
 #!/usr/bin/env blarg
 
-depends_on core/curl-installed core/sq-installed core/with-umask-installed
+depends_on core/curl-installed core/sq-installed core/with-umask-installed images-dir-created
 
-DEST_ISO=/var/lib/libvirt/images/archlinux-x86_64.iso
+DEST_ISO="${LIBVIRT_IMAGES_DIR}/archlinux-x86_64.iso"
 
 satisfied_if() {
   checkpoint_is_current
