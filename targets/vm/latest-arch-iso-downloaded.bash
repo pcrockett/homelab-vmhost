@@ -1,6 +1,13 @@
 #!/usr/bin/env blarg
 
-depends_on core/curl-installed core/sq-installed core/with-umask-installed images-dir-created
+DEPS=(
+  core/curl-installed
+  core/sq-installed
+  core/with-umask-installed
+  libvirt-images-dir-created
+)
+
+depends_on "${DEPS[@]}"
 
 DEST_ISO="${LIBVIRT_IMAGES_DIR}/archlinux-x86_64.iso"
 

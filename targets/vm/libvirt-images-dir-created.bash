@@ -7,6 +7,6 @@ satisfied_if() {
 }
 
 apply() {
-  as_root with-umask u=rwx,g=,o= mkdir --parent "${LIBVIRT_IMAGES_DIR}"
+  as_root with-umask u=rwx,g=x,o=x mkdir --parent "${LIBVIRT_IMAGES_DIR}"
   checkpoint_success
 }
