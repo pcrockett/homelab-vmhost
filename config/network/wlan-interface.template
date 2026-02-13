@@ -1,4 +1,5 @@
 # https://www.debian.org/doc/manuals/debian-handbook/sect.network-config.en.html
+# [tag:interface-config]
 
 auto wlp2s0
 iface wlp2s0 inet dhcp
