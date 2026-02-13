@@ -51,7 +51,7 @@ main() {
   # `-v`: Verbose. Display progress. Can do `-vv` instead if that's not enough.
 
   scan_command=(
-    nmap -Pn -A --reason -T "${TIMING}" -v
+    nmap -Pn --reason -T "${TIMING}" -v
   )
 
   case "${PROTOCOL}" in
