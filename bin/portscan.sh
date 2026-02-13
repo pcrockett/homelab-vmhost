@@ -15,6 +15,7 @@ Parameters:
 Environment variables:
 
   PORT_RANGE: Defaults to '1-1024' if not specified
+  TIMING: Defaults to 'aggressive'
 EOF
 }
 
@@ -27,6 +28,7 @@ panic_with_usage() {
 
 init() {
   PORT_RANGE="${PORT_RANGE:-"1-1024"}"
+  TIMING="${TIMING:-aggressive}"
   SCAN_TARGET="${1:-}"
   PROTOCOL="${2:-tcp}"
 
@@ -49,7 +51,7 @@ main() {
   # `-v`: Verbose. Display progress. Can do `-vv` instead if that's not enough.
 
   scan_command=(
-    nmap -Pn -A --reason -T normal -v
+    nmap -Pn -A --reason -T "${TIMING}" -v
   )
 
   case "${PROTOCOL}" in
