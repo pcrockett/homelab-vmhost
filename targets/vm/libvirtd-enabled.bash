@@ -2,7 +2,7 @@
 
 UNIT="libvirtd.service"
 
-depends_on packages-installed
+depends_on packages-installed libvirt-network-configured
 
 satisfied_if() {
   test "$(systemctl is-enabled "${UNIT}")" = "enabled" \
