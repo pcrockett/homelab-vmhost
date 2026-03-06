@@ -4,7 +4,7 @@ targets=(
   tree-installed
   net-tools-installed
   btop-installed
-  @pcrockett:helix/main
+  helix-installed
 )
 
 depends_on "${targets[@]}"
