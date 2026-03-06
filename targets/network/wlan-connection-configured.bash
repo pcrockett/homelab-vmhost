@@ -3,7 +3,7 @@
 depends_on core/with-umask-installed bitwarden/cli-installed
 
 FILE_NAME="wlan-interface"
-REPO_CONFIG_DIR="${BLARG_CWD}/config/network"
+REPO_CONFIG_DIR="${BLARG_MODULE_DIR}/config/network"
 SYSTEM_CONFIG_DIR="/etc/network/interfaces.d"
 
 satisfied_if() {

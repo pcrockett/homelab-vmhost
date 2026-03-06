@@ -1,7 +1,7 @@
 #!/usr/bin/env blarg
 
 UNIT="screensaver.service"
-REPO_PATH="${BLARG_CWD}/config/screensaver/${UNIT}"
+REPO_PATH="${BLARG_MODULE_DIR}/config/screensaver/${UNIT}"
 SYSTEM_PATH="/etc/systemd/system/${UNIT}"
 
 satisfied_if() {

@@ -3,7 +3,7 @@
 depends_on core/with-umask-installed bitwarden/cli-installed
 
 FILE_NAME="TODO"
-REPO_CONFIG_DIR="${BLARG_CWD}/config/TODO"
+REPO_CONFIG_DIR="${BLARG_MODULE_DIR}/config/TODO"
 SYSTEM_CONFIG_DIR="${HOME}/.config/TODO"
 
 satisfied_if() {

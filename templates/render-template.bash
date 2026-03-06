@@ -3,7 +3,7 @@
 depends_on core/with-umask-installed
 
 FILE_NAME="TODO.conf"
-REPO_CONFIG_DIR="${BLARG_CWD}/config/TODO"
+REPO_CONFIG_DIR="${BLARG_MODULE_DIR}/config/TODO"
 SYSTEM_CONFIG_DIR="/etc/TODO"
 
 satisfied_if() {

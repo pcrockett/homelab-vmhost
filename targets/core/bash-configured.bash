@@ -1,6 +1,6 @@
 #!/usr/bin/env blarg
 
-LINE_TO_ADD="source '${BLARG_CWD}/config/bash/bashrc'"
+LINE_TO_ADD="source '${BLARG_MODULE_DIR}/config/bash/bashrc'"
 
 satisfied_if() {
   grep --quiet --fixed-strings "${LINE_TO_ADD}" ~/.bashrc

@@ -1,6 +1,6 @@
 #!/usr/bin/env blarg
 
-REPO_PATH="${BLARG_CWD}/config/TODO"
+REPO_PATH="${BLARG_MODULE_DIR}/config/TODO"
 SYSTEM_PATH=~/.config/TODO
 
 satisfied_if() {

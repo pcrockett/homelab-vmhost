@@ -3,7 +3,7 @@
 depends_on core/with-umask-installed bitwarden/cli-installed
 
 FILE_NAME="config.sh"
-REPO_CONFIG_DIR="${BLARG_CWD}/config/backup"
+REPO_CONFIG_DIR="${BLARG_MODULE_DIR}/config/backup"
 SYSTEM_CONFIG_DIR="/etc/backup"
 
 satisfied_if() {
