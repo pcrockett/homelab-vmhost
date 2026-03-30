@@ -2,7 +2,7 @@
 
 targets=(
   make-installed
-  # TODO: uninstall terraform
+  terraform-uninstalled
 )
 
 depends_on "${targets[@]}"
