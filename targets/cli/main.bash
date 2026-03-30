@@ -4,6 +4,7 @@ targets=(
   tree-installed
   net-tools-installed
   btop-installed
+  screen-installed
   # helix-installed
 )
 
