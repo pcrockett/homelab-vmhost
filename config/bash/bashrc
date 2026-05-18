@@ -29,3 +29,11 @@ bwl() {
   bw lock
   BW_SESSION=
 }
+
+update_reboot() {
+  screen -U -L bash -l -c "
+    sudo apt-get update
+    && sudo apt-get upgrade --yes
+    && sudo systemctl reboot
+  "
+}
