@@ -14,7 +14,7 @@ config_update() {
     set -euo pipefail
     cd /opt/config/homelab-vmhost
     git pull
-    make
+    ./bin/blarg --verbose targets/main.bash
   )
 }
 

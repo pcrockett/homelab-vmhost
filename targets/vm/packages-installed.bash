@@ -6,7 +6,7 @@ PACKAGES=(
   libvirt-daemon-system
   bridge-utils
   dnsmasq-base
-  qemu-utils  # for qemu-img tool, which allows creating qcow2 volumes
+  qemu-utils # for qemu-img tool, which allows creating qcow2 volumes
   libspice-server1
   qemu-system-modules-spice
 )

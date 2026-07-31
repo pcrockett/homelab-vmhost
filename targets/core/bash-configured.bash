@@ -10,4 +10,3 @@ apply() {
   echo "${LINE_TO_ADD}" >>~/.bashrc
   echo "Bash successfully configured. Source ~/.bashrc or logout and back in again."
 }
-

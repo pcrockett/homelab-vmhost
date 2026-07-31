@@ -55,10 +55,10 @@ main() {
   )
 
   case "${PROTOCOL}" in
-    TCP|tcp)
+    TCP | tcp)
       scan_command+=(-sT "-pT:${PORT_RANGE}")
       ;;
-    UDP|udp)
+    UDP | udp)
       scan_command=(sudo "${scan_command[@]}" -sU "-pU:${PORT_RANGE}")
       ;;
     *)

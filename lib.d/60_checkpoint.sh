@@ -36,8 +36,7 @@ checkpoint_is_current() {
   checkpoint_timestamp="$(file_timestamp "${TARGET_CHECKPOINT_FILE}")"
   test "${checkpoint_timestamp}" -gt "$(file_timestamp "${BLARG_TARGET_PATH}")"
 
-  for path in "${paths_to_check[@]}"
-  do
+  for path in "${paths_to_check[@]}"; do
     test "${checkpoint_timestamp}" -gt "$(file_timestamp "${path}")"
   done
 }
