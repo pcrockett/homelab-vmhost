@@ -4,7 +4,7 @@ targets=(
   libvirtd-enabled
   libvirt-group-configured
   latest-arch-iso-downloaded
-  incus-group-configured
+  incus-initialized
 )
 
 depends_on "${targets[@]}"
