@@ -7,6 +7,7 @@ PACKAGES=(
   incus
   libspice-server1
   libvirt-daemon-system
+  ovmf # uefi firmware for vms, incus requires it
   qemu-system-modules-spice
   qemu-system-x86
   qemu-utils # for qemu-img tool, which allows creating qcow2 volumes
