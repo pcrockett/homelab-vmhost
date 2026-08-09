@@ -7,6 +7,6 @@ satisfied_if() {
 }
 
 apply() {
-  curl -SsfL https://philcrockett.com/yolo/v1.sh \
+  curl -SsfL https://philcrockett.com/yolo/v2.sh \
     | bash -s -- rush
 }
