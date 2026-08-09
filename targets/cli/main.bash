@@ -5,6 +5,7 @@ targets=(
   net-tools-installed
   btop-installed
   screen-installed
+  bat-installed
   # helix-installed
 )
 
