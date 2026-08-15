@@ -26,3 +26,8 @@ Targets are organized in a dependency tree, making sure the right steps are take
 the right order, and they are never re-run unless absolutely necessary. This means you
 can execute all these targets however often you want, and only the necessary ones will
 actually be applied.
+
+## TODO
+
+- [ ] setup incus vm with nextcloud all-in-one, available via tailscale
+  - [nextcloud aio with tailscale](https://github.com/nextcloud/all-in-one/discussions/6817)
