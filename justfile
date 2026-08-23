@@ -25,7 +25,7 @@ ssh:
     @#
     @# -i (interactive): uses .bashrc
     @# -l (login): emulates a regular login shell
-    HOMELAB_SCREEN_LOGGING=disabled ./bin/screen-ssh.sh bash -l -i
+    ./bin/tailscale-ssh.sh bash -l -i
 
 # Run btop on server
 btop:
