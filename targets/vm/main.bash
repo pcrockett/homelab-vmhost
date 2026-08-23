@@ -5,6 +5,7 @@ targets=(
   libvirt-group-configured
   latest-arch-iso-downloaded
   incus-initialized
+  scratch-vm-created
 )
 
 depends_on "${targets[@]}"
