@@ -4,6 +4,7 @@
 PACKAGES=(
   bridge-utils
   dnsmasq-base
+  gdisk # incus uses this to adjust GPT disks
   incus
   libspice-server1
   libvirt-daemon-system
