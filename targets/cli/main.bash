@@ -6,6 +6,7 @@ targets=(
   btop-installed
   screen-installed
   bat-installed
+  bat-symlink-created
   # helix-installed
 )
 
