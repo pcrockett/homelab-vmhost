@@ -3,7 +3,7 @@
 depends_on bat-installed
 
 USR_BIN="/usr/bin/batcat"
-USR_LOCAL_BIN="/usr/local/bin"
+USR_LOCAL_BIN="/usr/local/bin/bat"
 
 satisfied_if() {
   test_symlink "${USR_BIN}" "${USR_LOCAL_BIN}"
