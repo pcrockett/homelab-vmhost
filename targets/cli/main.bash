@@ -7,6 +7,7 @@ targets=(
   screen-installed
   bat-installed
   bat-symlink-created
+  bat-configured
   # helix-installed
 )
 
