@@ -37,3 +37,6 @@ update-blarg:
         >bin/blarg.tmp
     @chmod +x bin/blarg.tmp
     @mv bin/blarg.tmp bin/blarg
+
+clear-logs:
+    ./bin/tailscale-ssh.sh bash -l -i clear_logs
