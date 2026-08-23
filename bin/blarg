@@ -15,7 +15,7 @@ from tempfile import TemporaryDirectory
 from typing import List, Optional
 
 
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 
 
 STDLIB = """
@@ -126,6 +126,7 @@ satisfy() {
 
 
 BASE = """
+# shellcheck disable=SC2329  # will be called dynamically
 satisfied_if() {
     # this command will normally be unreachable; the user's `satisfied_if`
     # implementation will very often override this one.
@@ -379,8 +380,8 @@ def main() -> int:
 
     config = parse_config(module_dir / "blarg.conf")
     for module in config.modules:
-        module_dir = module.init(working_dir)
-        env[f"BLARG_MODULE_{module.id}"] = str(module_dir)
+        external_module_dir = module.init(working_dir)
+        env[f"BLARG_MODULE_{module.id}"] = str(external_module_dir)
 
     resolved_path = script_path.resolve()
     env["BLARG_TARGET_PATH"] = str(resolved_path)
