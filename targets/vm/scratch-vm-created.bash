@@ -21,5 +21,6 @@ apply() {
     --config limits.cpu="${CPU_COUNT}" \
     --config limits.memory="${MEMORY}" \
     --config limits.memory.enforce="${MEMORY_ENFORCE}" \
+    --config security.secureboot=false \
     --device root,size="${ROOT_SIZE}"
 }
