@@ -6,8 +6,8 @@ _default:
 lint:
     ./bin/lint.sh
 
-# Update remote config
-remote command="config_update":
+# Execute remote command (see config/bash/bashrc)
+remote command="config_update": clear-logs
     @# bash flags:
     @#
     @# -i (interactive): uses .bashrc
@@ -17,11 +17,15 @@ remote command="config_update":
 
 # Open interactive shell via SSH
 ssh:
+    @# screen flags:
+    @#
+    @# -R: attach to a session if possible, otherwise create a new one
+    @#
     @# bash flags:
     @#
     @# -i (interactive): uses .bashrc
     @# -l (login): emulates a regular login shell
-    ./bin/screen-ssh.sh bash -l -i
+    HOMELAB_SCREEN_LOGGING=disabled ./bin/screen-ssh.sh -R bash -l -i
 
 # Run btop on server
 btop:
@@ -38,5 +42,6 @@ update-blarg:
     @chmod +x bin/blarg.tmp
     @mv bin/blarg.tmp bin/blarg
 
+# Delete old screen log files
 clear-logs:
-    ./bin/tailscale-ssh.sh bash -l -i clear_logs
+    ./bin/tailscale-ssh.sh bash -l -i -c clear_logs
