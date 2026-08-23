@@ -7,44 +7,25 @@ lint:
     ./bin/lint.sh
 
 # Update remote config
-remote:
-    @# ssh flags:
-    @#
-    @# -t: allocate tty for interactivity
-    @#
-    @# screen flags:
-    @#
-    @# -U: run in unicode mode
-    @# -L: turn on output logging (saves output on server to ~/screenlog.0)
-    @#
+remote command="config_update":
     @# bash flags:
     @#
     @# -i (interactive): uses .bashrc
     @# -l (login): emulates a regular login shell
     @# -c (command): command to execute
-    tailscale ssh "${SSH_DEST}" -t -- screen -U -L bash -l -i -c config_update
+    ./bin/screen-ssh.sh bash -l -i -c "{{command}}"
 
 # Open interactive shell via SSH
 ssh:
-    @# ssh flags:
-    @#
-    @# -t: allocate tty for interactivity
-    @#
-    @# screen flags:
-    @#
-    @# -U: run in unicode mode
-    @# -L: turn on output logging (saves output on server to ~/screenlog.0)
-    @#
     @# bash flags:
     @#
     @# -i (interactive): uses .bashrc
     @# -l (login): emulates a regular login shell
-    @# -c (command): command to execute
-    tailscale ssh "${SSH_DEST}" -t -- screen -U -L bash -l -i
+    ./bin/screen-ssh.sh bash -l -i
 
 # Run btop on server
 btop:
-    tailscale ssh "${SSH_DEST}" -t -- btop --utf-force
+    ./bin/tailscale-ssh.sh btop --utf-force
 
 # Update blarg from upstream
 update-blarg:
