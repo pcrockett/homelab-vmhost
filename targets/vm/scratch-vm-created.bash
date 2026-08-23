@@ -9,7 +9,7 @@ VM_NAME=scratch
 CPU_COUNT=2
 MEMORY=2GiB
 MEMORY_ENFORCE=soft
-ROOT_DISK_SIZE=30GiB
+ROOT_DISK_SIZE=50GiB
 
 satisfied_if() {
   incus info "${VM_NAME}"
