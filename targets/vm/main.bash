@@ -3,9 +3,7 @@
 targets=(
   libvirtd-enabled
   libvirt-group-configured
-  latest-arch-iso-downloaded
-  incus-initialized
-  scratch-vm-created
+  scratch-vm-started
 )
 
 depends_on "${targets[@]}"
