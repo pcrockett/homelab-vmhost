@@ -10,6 +10,6 @@ satisfied_if() {
 }
 
 apply() {
-  as_root rm -rf "${USR_LOCAL_BIN}"
+  as_root rm -f "${USR_LOCAL_BIN}"
   as_root ln --symbolic "${USR_BIN}" "${USR_LOCAL_BIN}"
 }
