@@ -8,7 +8,7 @@ targets=(
   bat-installed
   bat-symlink-created
   bat-configured
-  # helix-installed
+  helix-installed
 )
 
 depends_on "${targets[@]}"
