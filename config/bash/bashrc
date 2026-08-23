@@ -37,5 +37,5 @@ update_reboot() {
 }
 
 clear_logs() {
-  rm ~/screenlog.*
+  rm -f ~/screenlog.*
 }
