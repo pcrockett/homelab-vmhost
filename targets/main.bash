@@ -2,6 +2,7 @@
 
 targets=(
   core/main
+  kernel/main
   network/main
   boot/main
   backup/main

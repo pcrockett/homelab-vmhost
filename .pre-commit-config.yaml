@@ -28,8 +28,9 @@ repos:
         name: lint shell scripts
         entry: shellcheck
         language: system
-        types:
+        types_or:
           - shell
+          - bash
       - id: shfmt
         name: autoformat shell scripts
         entry: shfmt
@@ -50,3 +51,9 @@ repos:
         language: system
         types:
           - yaml
+      - id: tagref
+        name: check tags and refs
+        entry: tagref
+        language: system
+        pass_filenames: false
+        args: [check]
