@@ -10,7 +10,7 @@ KEY_SYSTEM_PATH=/etc/apt/keyrings/zabbly.asc
 SOURCE_SYSTEM_PATH="/etc/apt/sources.list.d/zabbly-kernel-stable.sources"
 
 satisfied_if() {
-  files_are_same "${REPO_PATH}" "${SYSTEM_PATH}" \
+  files_are_same "${KEY_REPO_PATH}" "${KEY_SYSTEM_PATH}" \
     && test "$(cat "${SOURCE_SYSTEM_PATH}")" == "$(render_source)"
 }
 
