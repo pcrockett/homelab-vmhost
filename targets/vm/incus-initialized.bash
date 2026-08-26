@@ -1,6 +1,6 @@
 #!/usr/bin/env blarg
 
-depends_on incus-group-configured packages-installed
+depends_on incus-group-configured packages-installed incus-storage-initialized
 
 satisfied_if() {
   checkpoint_is_current

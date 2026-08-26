@@ -10,6 +10,7 @@ networks:
     project: default
 storage_pools:
   - config:
+      # [tag:incus-pool-config]
       # incus defaults storage to /var/...
       # however my debian reserves only a small amount of space there.
       # /srv is more appropriate
