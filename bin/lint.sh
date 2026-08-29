@@ -45,7 +45,7 @@ rule:no_raw_sudo() {
 
 rule:no_core_main() {
   ! all_files \
-    | ignore "bin/lint\.sh" "targets/main.bash" \
+    | ignore "bin/lint\.sh" "targets/main.bash" "AGENTS\.md" \
     | xargs rg --word-regexp --fixed-strings 'core/main'
 }
 
