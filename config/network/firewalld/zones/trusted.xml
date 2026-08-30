@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Trusted</short>
+  <description>Loopback interface - fully trusted</description>
+  <interface name="lo"/>
+  <service name="ssh"/>
+  <service name="dhcpv6-client"/>
+  <source address="127.0.0.1"/>
+  <target>ACCEPT</target>
+</zone>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone target="DROP">
+  <short>Incus</short>
+  <description>Incus bridge network</description>
+  <interface name="incusbr0"/>
+</zone>

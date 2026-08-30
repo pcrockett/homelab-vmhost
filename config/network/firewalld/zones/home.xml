@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone target="DROP">
+  <short>Home</short>
+  <description>WiFi interface with limited access</description>
+  <interface name="wlp2s0"/>
+  <service name="dhcp"/>
+  <service name="dhcpv6-client"/>
+  <!-- Best practice ICMP types -->
+  <icmp-block name="echo-request"/>
+  <icmp-block name="echo-reply"/>
+  <icmp-block name="destination-unreachable"/>
+  <icmp-block name="time-exceeded"/>
+  <icmp-block name="parameter-problem"/>
+  <icmp-block-inversion/>
+</zone>

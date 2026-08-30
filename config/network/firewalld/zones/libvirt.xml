@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone target="DROP">
+  <short>Libvirt</short>
+  <description>Libvirt default bridge</description>
+  <interface name="virbr0"/>
+</zone>

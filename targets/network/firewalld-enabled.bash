@@ -1,8 +1,8 @@
 #!/usr/bin/env blarg
 
-UNIT="libvirtd.service"
+UNIT="firewalld.service"
 
-depends_on packages-installed libvirt-firewalld-configured
+depends_on firewalld-configured
 
 satisfied_if() {
   test "$(systemctl is-enabled "${UNIT}")" = "enabled" \
