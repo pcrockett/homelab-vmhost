@@ -1,6 +1,9 @@
 #!/usr/bin/env blarg
 
-LINE_TO_ADD="source '${BLARG_MODULE_DIR}/config/bash/bashrc'"
+INSTALL_LOCATION="${HOME}/.config/homelab/bashrc"
+LINE_TO_ADD="source '${INSTALL_LOCATION}'"
+
+depends_on bashrc-installed
 
 satisfied_if() {
   grep --quiet --fixed-strings "${LINE_TO_ADD}" ~/.bashrc
