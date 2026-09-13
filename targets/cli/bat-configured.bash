@@ -9,5 +9,5 @@ satisfied_if() {
 
 apply() {
   rm -rf "${SYSTEM_PATH}"
-  install "${REPO_PATH}" "${SYSTEM_PATH}"
+  install --directory "${REPO_PATH}" "${SYSTEM_PATH}"
 }
