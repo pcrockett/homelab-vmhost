@@ -9,9 +9,13 @@ Work in progress. I copy / pasted a lot of this from my
 [tinkering laptop config](https://github.com/pcrockett/lappy), and I'm still getting it
 up and running.
 
-1. Clone the repository to your new Debian machine
-2. `cd` to your repository and run `./bin/blarg --verbose targets/main.bash`
-3. After that, you can just run `make` as often as you need to
+This repo assumes you have two machines: a "controller" machine where this repository
+lives, and a Debian server where you have SSH access.
+
+1. Clone the repository to your local machine
+2. `cp .envrc.template .envrc`
+3. Fill in your `.envrc` file appropriately, load it into environment (`direnv allow`)
+4. Run `just apply`
 
 ## How this works
 

@@ -10,15 +10,6 @@ ll() {
   ls -lh "$@"
 }
 
-config_update() {
-  (
-    set -euo pipefail
-    cd /opt/config/homelab-vmhost
-    git pull
-    ./bin/blarg --verbose targets/main.bash
-  )
-}
-
 # bitwarden unlock
 bwu() {
   BW_SESSION="$(bw unlock --raw)"

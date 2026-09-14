@@ -6,8 +6,12 @@ _default:
 lint:
     ./bin/lint.sh
 
+# Apply config to remote machine
+apply *args:
+    ./bin/blarg --ssh "${SSH_DEST}" --verbose {{args}} ./targets/main.bash
+
 # Execute remote command (see config/bash/bashrc)
-remote command="config_update": clear-logs
+remote command: clear-logs
     @# bash flags:
     @#
     @# -i (interactive): uses .bashrc
