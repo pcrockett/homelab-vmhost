@@ -1,6 +1,6 @@
 #!/usr/bin/env blarg
 
-REPO_PATH="${REPO_CONFIG_DIR}/bash/bashrc"
+REPO_PATH="${REPO_CONFIG_DIR}/bash/bashrc.bash"
 SYSTEM_PATH="${HOME}/.config/homelab/bashrc"
 
 satisfied_if() {

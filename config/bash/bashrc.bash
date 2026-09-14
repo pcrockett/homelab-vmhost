@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+export PATH="${HOME}/.local/bin:${PATH}"
 export RUSH_CONFIG="${HOME}/.config/rush/config"
 export RUSH_ROOT="${HOME}/.local/share/rush"
 export HOMELAB_VHMOST_BASH_CONFIGURED=1
@@ -32,8 +33,8 @@ bwl() {
 
 update_reboot() {
   sudo apt-get update \
-  && sudo apt-get upgrade --yes \
-  && sudo systemctl reboot
+    && sudo apt-get upgrade --yes \
+    && sudo systemctl reboot
 }
 
 clear_logs() {
