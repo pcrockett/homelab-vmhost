@@ -4,6 +4,8 @@ import hashlib
 import json
 import os
 import re
+import secrets
+import shlex
 import shutil
 import subprocess
 import sys
@@ -17,7 +19,7 @@ from tempfile import TemporaryDirectory
 from typing import Any, List, IO, Mapping, MutableMapping, Optional
 
 
-VERSION = "0.7.0-rc2"
+VERSION = "0.7.0-rc3"
 
 
 STDLIB = """
@@ -372,16 +374,9 @@ class SSHProcess:
         self,
         remote_command: str,
         pty: bool = False,
-        text_io: bool = False,
     ) -> subprocess.Popen:
         full_command = self._build_ssh_command(remote_command, pty)
-        output_mode = subprocess.PIPE if text_io else None
-        return subprocess.Popen(
-            full_command,
-            text=text_io,
-            stdout=output_mode,
-            stderr=output_mode,
-        )
+        return subprocess.Popen(full_command)
 
     def send_data(
         self,
@@ -426,7 +421,7 @@ def execute_remote(
         forwarded_args.append("--verbose")
     if dry_run:
         forwarded_args.append("--dry-run")
-    forwarded_args.append(str(script_path))
+    forwarded_args.append(shlex.quote(str(script_path)))
 
     # Copy blarg script to local .blarg/bin for inclusion in tar
     local_blarg_bin = working_dir / ".blarg" / "bin"
@@ -441,6 +436,9 @@ def execute_remote(
 
     ssh = SSHProcess(ssh_target, env)
 
+    # intentionally using quoted, unresolved shell syntax
+    remote_temp_dir = f'"${{TMPDIR:-/tmp}}/blarg-{secrets.token_urlsafe(6)}"'
+
     try:
         # setup initial connection where user can see prompts if any, and get through
         # them.
@@ -448,7 +446,7 @@ def execute_remote(
         # ex: tailscale SSH often shows a link you can click on to go through a
         # web-based login flow.
 
-        connect_status = ssh.start("true").wait()
+        connect_status = ssh.start(f"mkdir -m 700 -p {remote_temp_dir}").wait()
         if connect_status != 0:
             print(
                 f"FATAL: ssh exited with code {connect_status}",
@@ -457,23 +455,6 @@ def execute_remote(
             return connect_status
     except Exception as e:
         print(f"FATAL: Failed to connect to remote: {e}", file=sys.stderr)
-        return 1
-
-    try:
-        tmpdir_process = ssh.start(
-            "mktemp -d ${TMPDIR:-/tmp}/blarg-XXXXXX",
-            text_io=True,
-        )
-        mktemp_out, mktemp_err = tmpdir_process.communicate()
-        if tmpdir_process.returncode != 0:
-            print(
-                f"FATAL: mktemp failed with exit code {tmpdir_process.returncode}\n"
-                + mktemp_err
-            )
-            return 1
-        remote_temp_dir = mktemp_out.strip()
-    except Exception as e:
-        print(f"FATAL: Failed to create remote temp dir: {e}", file=sys.stderr)
         return 1
 
     # Stream project to remote via tar over SSH
@@ -520,7 +501,7 @@ def execute_remote(
 
     remote_working_dir = remote_temp_dir
     blarg_cmd = (
-        f"PATH={remote_temp_dir}/.blarg/bin:${{PATH}} blarg {' '.join(forwarded_args)}"
+        f'PATH="{remote_temp_dir}/.blarg/bin:${{PATH}}" blarg {" ".join(forwarded_args)}'
     )
 
     try:
