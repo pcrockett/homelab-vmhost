@@ -4,6 +4,7 @@ targets=(
   libvirtd-enabled
   libvirt-group-configured
   scratch/tailscale-provisioned
+  scratch/sudoers-configured
   coolify-vm-started
 )
 
