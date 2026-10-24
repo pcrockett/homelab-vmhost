@@ -3,7 +3,7 @@
 targets=(
   libvirtd-enabled
   libvirt-group-configured
-  scratch-vm-started
+  scratch/tailscale-provisioned
   coolify-vm-started
 )
 
