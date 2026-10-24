@@ -7,5 +7,5 @@ satisfied_if() {
 }
 
 apply() {
-  panic "As of right now, this step is manual. Please run \`bw login\` and try again."
+  bw login </dev/tty
 }
