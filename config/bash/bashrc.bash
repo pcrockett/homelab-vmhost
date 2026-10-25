@@ -31,3 +31,7 @@ update_reboot() {
 clear_logs() {
   rm -f ~/screenlog.*
 }
+
+scratch_destroy() {
+  incus delete scratch
+}
