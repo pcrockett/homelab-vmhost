@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 import argparse
 import hashlib
 import json
@@ -9,17 +11,14 @@ import shlex
 import shutil
 import subprocess
 import sys
-
-
 from configparser import ConfigParser
 from dataclasses import dataclass
 from pathlib import Path
 from shutil import rmtree
 from tempfile import TemporaryDirectory
-from typing import Any, List, IO, Mapping, MutableMapping, Optional
+from typing import IO, Any, Mapping, MutableMapping
 
-
-VERSION = "0.7.0"
+VERSION = "0.7.1"
 
 
 STDLIB = """
@@ -201,16 +200,19 @@ __BLARG_MAIN__
 
 @dataclass
 class CliArgs:
-    script_path: Optional[Path]
+    script_path: Path | None
     dump_src: bool
     version: bool
     verbose: bool
     dry_run: bool
-    ssh: Optional[str] = None
+    ssh: str | None = None
 
 
 class CliParser(argparse.ArgumentParser):
     def __init__(self):
+        # TODO: replace ArgumentParser. it's an order of magnitude slower than even
+        # generate_script(), which is reading a bunch of files from disk.
+
         super().__init__(
             "blarg",
             description="Execute bash target files <https://github.com/pcrockett/blarg>",
@@ -255,7 +257,7 @@ def parse_args() -> CliArgs:
     )
 
 
-def list_dir_if_exists(dir_path: Path) -> List[Path]:
+def list_dir_if_exists(dir_path: Path) -> list[Path]:
     try:
         return sorted([p.resolve() for p in dir_path.iterdir() if not p.is_dir()])
     except (FileNotFoundError, NotADirectoryError):
@@ -338,7 +340,7 @@ class ExternalModule:
 
 @dataclass
 class BlargConfig:
-    modules: List[ExternalModule]
+    modules: list[ExternalModule]
 
 
 def parse_config(config_path: Path) -> BlargConfig:
@@ -346,7 +348,7 @@ def parse_config(config_path: Path) -> BlargConfig:
     config = ConfigParser()
     config.read(config_path)
 
-    modules: List[ExternalModule] = []
+    modules: list[ExternalModule] = []
     section: str
     for section in config.sections():
         (_, _, module_id) = section.partition("module.")
@@ -376,9 +378,12 @@ class SSHProcess:
         local_control_dir.mkdir(parents=True, exist_ok=True)
 
         self._ssh_options = [
-            "-o", f"ControlPath={local_control_dir}/%C",
-            "-o", "ControlMaster=auto",
-            "-o", "ControlPersist=10",
+            "-o",
+            f"ControlPath={local_control_dir}/%C",
+            "-o",
+            "ControlMaster=auto",
+            "-o",
+            "ControlPersist=10",
         ]
 
     def start(
@@ -389,21 +394,23 @@ class SSHProcess:
         full_command = self._build_ssh_command(remote_command, pty)
         return subprocess.Popen(full_command)
 
-    def send_data(
-        self,
-        remote_command: str,
-        data: IO[Any]
-    ) -> subprocess.Popen:
+    def send_data(self, remote_command: str, data: IO[Any]) -> subprocess.Popen:
         full_command = self._build_ssh_command(remote_command)
         return subprocess.Popen(full_command, stdin=data)
 
-    def _build_ssh_command(self, remote_command: str, pty: bool = False) -> List[str]:
+    def _build_ssh_command(self, remote_command: str, pty: bool = False) -> list[str]:
         base = ["ssh", "-t"] if pty else ["ssh"]
-        return base + self._ssh_options + [self._remote_target, remote_command]
+        # the remote user's login shell may not be POSIX-compatible (e.g. fish), and
+        # our command strings rely on POSIX syntax (`${VAR:-default}`, `VAR=value cmd`).
+        # always invoke bash explicitly: the login shell only has to understand
+        # `bash -c '<quoted string>'`, which any shell can parse.
+        bash_command = f"bash -c {shlex.quote(remote_command)}"
+        return base + self._ssh_options + [self._remote_target, bash_command]
 
 
-def print_fatal(message: str):
+def fatal_exit_code(message: str) -> int:
     print(f"FATAL: {message}", file=sys.stderr)
+    return 1
 
 
 def execute_remote(
@@ -417,18 +424,15 @@ def execute_remote(
     resolved_script_path = script_path.resolve()
     resolved_working_dir = working_dir.resolve()
     if not str(resolved_script_path).startswith(str(resolved_working_dir)):
-        print_fatal(
+        return fatal_exit_code(
             f"Target path {script_path} is outside the project directory {working_dir}"
         )
-        return 1
 
     if shutil.which("ssh") is None:
-        print_fatal("ssh not found")
-        return 1
+        return fatal_exit_code("ssh not found")
 
     if shutil.which("tar") is None:
-        print_fatal("tar not found")
-        return 1
+        return fatal_exit_code("tar not found")
 
     forwarded_args = []
     if verbose:
@@ -444,14 +448,13 @@ def execute_remote(
 
     try:
         shutil.copy2(Path(__file__).resolve(), local_blarg_path)
-    except Exception as e:
-        print_fatal(f"Failed to copy blarg script locally: {e}")
-        return 1
+    except Exception as e:  # noqa BLE001 -- we are exiting the program
+        return fatal_exit_code(f"Failed to copy blarg script locally: {e}")
 
     ssh = SSHProcess(ssh_target, env)
 
-    # temp dir string intentionally unresolved, expecting the remote shell to handle
-    # variable expansion etc.
+    # temp dir string intentionally unresolved, expecting the remote bash process to
+    # handle variable expansion etc.
     #
     # safe since i control all the inputs, and shell variable expansion should handle
     # any craziness that might be hiding in TMPDIR env variable.
@@ -460,28 +463,25 @@ def execute_remote(
     try:
         # mode 700 equivalent to `u=rwx,g=,o=`
         mkdir_status = ssh.start(f"mkdir -m 700 -p {remote_temp_dir}").wait()
-
         if mkdir_status != 0:
-            print_fatal(f"ssh exited with code {mkdir_status}" )
-            return mkdir_status
-    except Exception as e:
-        print_fatal(f"Failed to connect to remote: {e}")
-        return 1
+            return fatal_exit_code(f"ssh exited with code {mkdir_status}")
+    except Exception as e:  # noqa BLE001 -- we are exiting the program
+        return fatal_exit_code(f"Failed to connect to remote: {e}")
 
     # Stream project to remote via tar over SSH
     local_tar_bundle_cmd = [
         "tar",
-        "czf", "-",
+        "czf",
+        "-",
         "--exclude=.git",
-        "-C", str(resolved_working_dir),
-        "."
+        "-C",
+        str(resolved_working_dir),
+        ".",
     ]
 
     try:
         tar_proc = subprocess.Popen(
-            local_tar_bundle_cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            local_tar_bundle_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
 
         if tar_proc.stdout is None:
@@ -498,46 +498,37 @@ def execute_remote(
         _, ssh_error = ssh_proc.communicate()
 
         if tar_exit_code != 0:
-            print_fatal(f"tar failed with exit code {tar_exit_code}")
-            return 1
+            return fatal_exit_code(f"tar failed with exit code {tar_exit_code}")
 
         if ssh_proc.returncode != 0:
             error_msg = ssh_error.decode() if ssh_error else "unknown error"
-            print_fatal(f"SSH extraction failed: {error_msg}")
-            return 1
+            return fatal_exit_code(f"SSH extraction failed: {error_msg}")
 
-    except Exception as e:
-        print_fatal(f"Failed to upload local project to remote: {e}")
-        return 1
+    except Exception as e:  # noqa BLE001 -- we are exiting the program
+        return fatal_exit_code(f"Failed to upload local project to remote: {e}")
 
     remote_working_dir = remote_temp_dir
-    blarg_cmd = (
-        f'PATH="{remote_temp_dir}/.blarg/bin:${{PATH}}" blarg {" ".join(forwarded_args)}'
-    )
+    blarg_cmd = f'PATH="{remote_temp_dir}/.blarg/bin:${{PATH}}" blarg {" ".join(forwarded_args)}'
 
     try:
-        return (
-            ssh.start(f"cd {remote_working_dir} && {blarg_cmd}", pty=True)
-            .wait()
-        )
-    except Exception as e:
-        print_fatal(f"SSH command `{blarg_cmd}` failed: {e}")
-        return 1
+        return ssh.start(f"cd {remote_working_dir} && {blarg_cmd}", pty=True).wait()
+    except Exception as e:  # noqa BLE001 -- we are exiting the program
+        return fatal_exit_code(f"SSH command `{blarg_cmd}` failed: {e}")
     finally:
         try:
             ssh.start(f"rm -rf {remote_temp_dir}").wait()
-        except Exception:
-            pass  # Ignore cleanup errors, it's all in a temp dir anyway
+        except Exception as e:  # noqa BLE001 -- we are exiting the program
+            print(f"WARNING: cleanup command failed with {e}", file=sys.stderr)
 
 
 def execute_local(
-        working_dir: Path,
-        module_dir: Path,
-        script_path: Path,
-        env: MutableMapping[str, str],
-        verbose: bool,
-        dry_run: bool
-    ):
+    working_dir: Path,
+    module_dir: Path,
+    script_path: Path,
+    env: MutableMapping[str, str],
+    verbose: bool,
+    dry_run: bool,
+):
     resolved_path = script_path.resolve()
     env["BLARG_TARGET_PATH"] = str(resolved_path)
 
@@ -577,12 +568,11 @@ def execute_local(
 
     if str(resolved_path) in running_targets:
         stack_seperator = "\n-> "
-        print_fatal(
+        return fatal_exit_code(
             f"Circular dependency detected at `{resolved_path}`:\n"
             f"{stack_seperator.join(running_targets)}"
             f"{stack_seperator}{resolved_path}"
         )
-        return 1
 
     running_targets.append(str(resolved_path))
     env["BLARG_RUNNING_TARGETS"] = json.dumps(running_targets)
@@ -625,8 +615,7 @@ def main() -> int:
         return 0
 
     if args.ssh and args.dump_src:
-        print_fatal("--ssh and --dump-src are mutually exclusive")
-        return 1
+        return fatal_exit_code("--ssh and --dump-src are mutually exclusive")
 
     if not args.script_path:
         CliParser().print_help()
@@ -676,6 +665,7 @@ def main() -> int:
             args.dry_run,
         )
 
+
 if __name__ == "__main__":
     exit_code = main()
-    quit(exit_code)
+    sys.exit(exit_code)
