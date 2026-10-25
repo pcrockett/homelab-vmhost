@@ -6,5 +6,5 @@ satisfied_if() {
 
 apply() {
   incus start "${VM_NAME}"
-  sleep 5 # TODO: poll until it's up and ready?
+  sleep 10 # TODO: poll until it's up and ready?
 }
