@@ -33,5 +33,5 @@ clear_logs() {
 }
 
 scratch_destroy() {
-  incus delete scratch
+  incus delete scratch --force
 }
