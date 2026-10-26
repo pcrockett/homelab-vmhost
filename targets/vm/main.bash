@@ -3,6 +3,7 @@
 targets=(
   libvirtd-enabled
   libvirt-group-configured
+  host-isolated
   coolify-vm-started
   scratch/main
 )

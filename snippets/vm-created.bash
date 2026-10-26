@@ -1,6 +1,6 @@
 # create an incus virtual machine
 
-depends_on vm/incus-initialized
+depends_on vm/incus-initialized vm/host-isolated
 
 VM_NAME="${VM_NAME:?must specify vm name at least}"
 CPU_COUNT="${CPU_COUNT:-2}"

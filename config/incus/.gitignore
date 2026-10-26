@@ -1,2 +1,5 @@
 # rendered from isolation-acl.yaml.template during apply
 isolation-acl.yaml
+
+# rendered from host-isolation-acl.yaml.template during apply
+host-isolation-acl.yaml

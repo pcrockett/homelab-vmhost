@@ -35,3 +35,4 @@ actually be applied.
 
 - [ ] setup incus vm with nextcloud all-in-one, available via tailscale
   - [nextcloud aio with tailscale](https://github.com/nextcloud/all-in-one/discussions/6817)
+- [ ] provision `scratch` on its own separate incus network

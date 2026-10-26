@@ -2,8 +2,10 @@
 
 targets=(
   tailscale-installed
+  tailscale-provisioned
   wlan-driver-installed
   wlan-connection-configured
+  sshd-disabled
   # nftables-enabled
 )
 

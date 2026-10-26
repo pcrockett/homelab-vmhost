@@ -37,3 +37,4 @@
 ## Policies
 - This repo is public. Never hardcode IPs or IP ranges; detect them at runtime instead.
 - Comments should only contain details a developer is likely to ask about in the future. Don't restate what's obvious from the code.
+- Never call `sudo` or `as_root` inside `satisfied_if`. It runs on every apply, including dry-runs, so it must stay a cheap, read-only, non-interactive check.
