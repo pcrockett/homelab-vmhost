@@ -33,3 +33,7 @@
 - Prefer GNU-style long command flags when you know for a fact they exist (e.g. `--create-home` instead of `-m`). Don't tie yourself in knots attaining the long form; short flags are fine too.
 - EditorConfig: 2-space indent for most files, 4-space for Python/Rust/Justfile, tabs for Makefile/Caddyfile.
 - SSH destination set via `SSH_DEST` env var (see `.envrc.template`).
+
+## Policies
+- This repo is public. Never hardcode IPs or IP ranges; detect them at runtime instead.
+- Comments should only contain details a developer is likely to ask about in the future. Don't restate what's obvious from the code.

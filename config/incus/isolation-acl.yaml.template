@@ -1,0 +1,27 @@
+description: block a VM from the physical wifi network except tailscale, and from IPv6
+egress:
+  - description: block all TCP to the physical wifi LAN
+    action: drop
+    protocol: tcp
+    destination: ${WIFI_SUBNET}
+    state: enabled
+  - description: block ICMP to the physical wifi LAN
+    action: drop
+    protocol: icmp4
+    destination: ${WIFI_SUBNET}
+    state: enabled
+  - description: block UDP to the physical wifi LAN except the tailscale port
+    action: drop
+    protocol: udp
+    destination: ${WIFI_SUBNET}
+    destination_port: 0-41640,41642-65535
+    state: enabled
+  - description: block all IPv6 egress
+    action: drop
+    destination: ::/0
+    state: enabled
+ingress:
+  - description: block all IPv6 ingress
+    action: drop
+    source: ::/0
+    state: enabled
