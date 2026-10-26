@@ -5,4 +5,5 @@
 #
 
 VM_NAME=scratch
+NIC_NETWORK="${VM_SCRATCH_NETWORK}"
 snippet vm-created

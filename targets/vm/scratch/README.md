@@ -11,9 +11,12 @@ just remote scratch_destroy && just apply
 after the scratch vm is created, some targets here automatically provision it with a
 few basics:
 
+- gets its own incus network (`scratchbr0`, IPv6 disabled) instead of the shared
+  `incusbr0` bridge
 - creates a user account matching the username on the vm host
 - gives the user passwordless sudo
 - connects the machine to the tailnet via the auth key under the `machine.scratch`
   bitwarden entry
-- blocks access to the physical wifi network (and all IPv6) via an incus network
-  ACL, except tailscale's direct peer connections (UDP 41641)
+- every VM network carries a default-deny ACL (`network-isolation`, applied by
+  `targets/vm/network-isolated`): VMs may reach the internet and tailscale
+  (UDP 41641), nothing else — not the host, the LAN, other VMs, or IPv6

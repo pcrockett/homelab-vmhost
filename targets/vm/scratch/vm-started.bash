@@ -2,5 +2,5 @@
 # shellcheck disable=SC2034  # variables used in snippet
 
 VM_NAME=scratch
-depends_on vm-created wifi-blocked
+depends_on vm-created
 snippet vm-started
