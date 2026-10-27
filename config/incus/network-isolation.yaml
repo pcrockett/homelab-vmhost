@@ -1,3 +1,9 @@
+# incus evaluates ACL drops before allows, so the tailscale carve-out is a narrowed drop
+# and the internet allowances are protocol-scoped allows over a drop-by-default action —
+# which also catches v4 protocols the ACL vocabulary can't express. DHCP and DNS to the
+# VM's own bridge gateway are incus "baseline service rules" that run before ACL rules,
+# so they keep working.
+
 description: VMs may reach the internet and tailscale; everything else is dropped
 egress:
   - description: block TCP to private ranges
