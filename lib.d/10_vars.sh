@@ -11,7 +11,9 @@ export LIBVIRT_IMAGES_DIR="/srv/libvirt/images"
 
 # VM networking: see [ref:vm/networking-strategy]
 export VM_SCRATCH_NETWORK=scratchbr0
+export VM_COOLIFY_NETWORK=coolifybr0
 export VM_ALL_NETWORKS=(
   incusbr0
   "${VM_SCRATCH_NETWORK}"
+  "${VM_COOLIFY_NETWORK}"
 )

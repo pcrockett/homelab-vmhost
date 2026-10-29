@@ -6,5 +6,6 @@ CPU_COUNT=2
 MEMORY=4GiB
 ROOT_DISK_SIZE=50GiB
 INCUS_IMAGE=images:archlinux
+NIC_NETWORK="${VM_COOLIFY_NETWORK}"
 
 snippet vm-created
