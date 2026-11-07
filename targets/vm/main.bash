@@ -6,6 +6,7 @@ targets=(
   networks-isolated
   scratch/main
   coolify/main
+  proxy/main
 )
 
 depends_on "${targets[@]}"

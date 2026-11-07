@@ -14,38 +14,11 @@ down my current coolify VM still and rebuild it._
 
 ## Trusted reverse proxy VM
 
-- Run Caddy in a trusted VM, Tailscale tag `trusted`.
-- Does not receive traffic from the Internet; only accessible via tailnet.
-- No access to private subnets. Just needs tailnet access.
-- Does TLS termination, uses Let's Encrypt plus DNS challenge to get a wildcard cert.
-- Routes all `*.internal.example.com` requests to Coolify VM, via Tailscale interface.
-- Porkbun API key stored in Bitwarden, scoped to just the internal domain.
-- Domain name is a setting configured in `.envrc`
-
-Caddy Dockerfile should look _roughly_ like:
-
-```dockerfile
-FROM caddy:2-builder AS builder
-RUN xcaddy build --with github.com/caddy-dns/porkbun
-
-FROM caddy:2
-COPY --from=builder /usr/bin/caddy /usr/bin/caddy
-```
-
-Caddy config should look _roughly_ like:
-
-```caddyfile
-{
-	acme_dns porkbun {
-		api_key {$PORKBUN_API_KEY}
-		api_secret_key {$PORKBUN_API_SECRET_KEY}
-	}
-}
-
-*.internal.{$APEX_DOMAIN} {
-	reverse_proxy 100.x.y.z:80
-}
-```
+The trusted reverse proxy VM (Caddy, `tag:trusted`, Let's Encrypt wildcard via
+Porkbun DNS challenge, serving `*.internal.<apex>`) is documented in
+`[ref:proxy-overview]` and implemented under `targets/vm/proxy/`. Once it exists,
+this plan's Coolify VM routes all `*.internal.<apex>` requests to it via the
+Tailscale interface.
 
 ## Untrusted Coolify VM
 

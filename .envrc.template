@@ -2,4 +2,14 @@
 strict_env
 PATH_add bin
 
+# note: the repo (including this file) is tarred to remote machines by
+# `blarg --ssh`, and lib.d/05_envrc.sh evaluates the `export` lines there too.
+# keep this file free of anything that must not land on the vmhost or VMs.
+
 export SSH_DEST=user@tailscale-hostname
+
+# tailscale ssh destination of the proxy VM (used by vm/proxy/guest-applied)
+export SSH_PROXY_DEST=phil@proxy
+
+# public apex domain; the proxy VM serves *.internal.${INTERNAL_APEX_DOMAIN}
+export INTERNAL_APEX_DOMAIN=example.com

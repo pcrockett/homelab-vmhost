@@ -1,3 +1,7 @@
 .blarg/
 .envrc
 HANDOFF.md
+
+# rendered by targets from .template files, then deleted; ignore in case an
+# apply aborts in between
+/config/caddy/proxy.env
