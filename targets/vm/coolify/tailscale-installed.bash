@@ -1,6 +1,6 @@
 #!/usr/bin/env blarg
 
-depends_on vm-started
+depends_on vm-started pacman-keyring-initialized
 
 satisfied_if() {
   coolify_run pacman --query tailscale

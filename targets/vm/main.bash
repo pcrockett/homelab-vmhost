@@ -6,6 +6,7 @@ targets=(
   networks-isolated
   scratch/main
   coolify/main
+  docker/main
 )
 
 depends_on "${targets[@]}"
