@@ -1,19 +1,7 @@
 #!/usr/bin/env blarg
+# shellcheck disable=SC2034  # variables used inside snippet
 
 depends_on vm-started
 
-MARKER_FILE="/opt/pacman-keyring-initialized"
-
-satisfied_if() {
-  scratch_run test -f "${MARKER_FILE}"
-}
-
-apply() {
-  scratch_run pacman -Sy --needed --noconfirm archlinux-keyring
-  scratch_run pacman-key --populate archlinux
-  scratch_run touch "${MARKER_FILE}"
-}
-
-scratch_run() {
-  incus exec scratch -- "$@"
-}
+VM_NAME=scratch
+snippet pacman-keyring-initialized

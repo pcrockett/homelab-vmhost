@@ -3,5 +3,5 @@
 
 depends_on vm-started
 
-VM_NAME="docker"
+VM_NAME=docker
 snippet vm-user-created

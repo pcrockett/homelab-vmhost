@@ -3,5 +3,5 @@
 
 depends_on vm-started
 
-VM_NAME="scratch"
+VM_NAME=scratch
 snippet vm-user-created
