@@ -4,4 +4,4 @@
 depends_on vm-started
 
 VM_NAME=coolify
-snippet pacman-keyring-initialized
+snippet vm-pacman-keyring-initialized

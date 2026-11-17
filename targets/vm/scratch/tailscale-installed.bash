@@ -1,15 +1,7 @@
 #!/usr/bin/env blarg
+# shellcheck disable=SC2034  # variables used inside snippet
 
 depends_on vm-started pacman-keyring-initialized
 
-satisfied_if() {
-  scratch_run pacman --query tailscale
-}
-
-apply() {
-  scratch_run pacman -Syu --needed --noconfirm tailscale
-}
-
-scratch_run() {
-  incus exec scratch -- "$@"
-}
+VM_NAME=scratch
+snippet vm-tailscale-installed
