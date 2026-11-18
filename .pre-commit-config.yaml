@@ -17,10 +17,10 @@ repos:
   # local tools assumed to be installed with mise, see mise.toml
   - repo: local
     hooks:
-      - id: actionlint
+      - id: jactionlint
         name: lint github actions files
         language: system
-        entry: actionlint
+        entry: jactionlint
         types:
           - yaml
         files: ^\.github/workflows/
@@ -51,9 +51,21 @@ repos:
         language: system
         types:
           - yaml
+      - id: dprint
+        name: autoformat markdown files
+        entry: dprint fmt
+        language: system
+        types:
+          - markdown
+      - id: zizmor
+        name: audit workflows
+        entry: zizmor . --fix=all
+        language: system
+        types:
+          - yaml
+        files: ^\.github/workflows/
       - id: tagref
-        name: check tags and refs
-        entry: tagref
+        name: validate tags, refs, and files
+        entry: tagref check
         language: system
         pass_filenames: false
-        args: [check]
