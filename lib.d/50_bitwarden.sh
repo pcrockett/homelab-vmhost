@@ -22,7 +22,7 @@ bw_session() {
   export BW_SESSION
 }
 
-load_bw_item() {
+bw_load_item() {
   # load a bitwarden entry into memory, to get values out of with `bw_value`
   # needs these targets to work:
   #
@@ -36,7 +36,7 @@ load_bw_item() {
 bw_value() {
   # get values out of a previously-loaded bitwarden item.
   #
-  # assumes you've already called `load_bw_item`
+  # assumes you've already called `bw_load_item`
   #
   # needs these targets to work:
   #
@@ -53,7 +53,7 @@ bw_value() {
 bw_username() {
   # get login username out of a previously-loaded bitwarden item.
   #
-  # assumes you've already called `load_bw_item`
+  # assumes you've already called `bw_load_item`
   #
   # needs these targets to work:
   #
@@ -65,7 +65,7 @@ bw_username() {
 bw_password() {
   # get login password out of a previously-loaded bitwarden item.
   #
-  # assumes you've already called `load_bw_item`
+  # assumes you've already called `bw_load_item`
   #
   # needs these targets to work:
   #

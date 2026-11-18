@@ -15,7 +15,7 @@ satisfied_if() {
 
 apply() {
   satisfy bitwarden/synced
-  load_bw_item machine.lab01
+  bw_load_item machine.lab01
   TS_AUTH_KEY="$(bw_value tailscale.auth-key)"
 
   as_root systemctl enable --now tailscaled.service

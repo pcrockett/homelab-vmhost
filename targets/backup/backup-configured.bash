@@ -12,7 +12,7 @@ satisfied_if() {
 
 apply() {
   satisfy bitwarden/synced
-  load_bw_item machine.lab01
+  bw_load_item machine.lab01
 
   RESTIC_E2EE_PASSWORD="$(bw_value backup.e2ee-password)" \
   AWS_ACCESS_KEY_ID="$(bw_value backup.aws-access-key.id)" \

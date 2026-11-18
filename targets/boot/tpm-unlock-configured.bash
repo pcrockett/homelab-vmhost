@@ -8,7 +8,7 @@ satisfied_if() {
 
 apply() {
   satisfy bitwarden/synced
-  load_bw_item machine.lab01
+  bw_load_item machine.lab01
 
   local disk_encryption_password
   disk_encryption_password="$(bw_value disk.encryption.password)"

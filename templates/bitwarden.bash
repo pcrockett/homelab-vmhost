@@ -13,7 +13,7 @@ satisfied_if() {
 
 apply() {
   satisfy bitwarden/synced
-  load_bw_item machine.lab01
+  bw_load_item machine.lab01
 
   SECRET_VALUE="$(bw_value secret-attribute)" \
     template_render "${REPO_CONFIG_DIR}/${FILE_NAME}.template"

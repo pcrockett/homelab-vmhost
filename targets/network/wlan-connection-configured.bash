@@ -12,7 +12,7 @@ satisfied_if() {
 
 apply() {
   satisfy bitwarden/synced
-  load_bw_item machine.lab01
+  bw_load_item machine.lab01
 
   WLAN_SSID="$(bw_value wlan.ssid)" \
   WLAN_PASSWORD="$(bw_value wlan.password)" \
