@@ -7,6 +7,7 @@ targets=(
   scratch/main
   coolify/main
   docker/main
+  proxy/main
 )
 
 depends_on "${targets[@]}"
