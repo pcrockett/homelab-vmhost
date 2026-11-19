@@ -8,8 +8,8 @@ just remote scratch_destroy && just apply
 
 ## minimal provisioning
 
-after the scratch vm is created, some targets here automatically provision it with a
-few basics:
+after the scratch vm is created, some targets here automatically provision it with a few
+basics:
 
 - creates a user account matching the username on the vm host
 - gives the user passwordless sudo
